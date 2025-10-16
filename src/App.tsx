@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 import { Badge } from './components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './components/ui/tabs';
 import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './components/ui/tooltip';
 
 import './App.css';
@@ -53,7 +54,7 @@ const content = {
     contact: {
       title: 'Get In Touch',
       bookMeeting: 'Book a meeting',
-      footerText: '© Abdullah Aboueleila. All rights reserved.',
+      footerText: '©Abdullah Aboueleila. All rights reserved.',
     },
     chatLabel: 'talk to Lara Abdullah\'s Ai assistant',
     calendlyTitle: 'Schedule a Meeting',
@@ -95,7 +96,7 @@ const content = {
     contact: {
       title: 'تواصل معي',
       bookMeeting: 'حجز اجتماع',
-      footerText: '© عبدالله ابو العلا. جميع الحقوق محفوظة.',
+      footerText: '©عبدالله ابو العلا. جميع الحقوق محفوظة.',
     },
     chatLabel: 'تحدث إلى لارا، مساعدة عبدالله بالذكاء الاصطناعي',
     calendlyTitle: 'جدولة اجتماع',
@@ -407,7 +408,7 @@ export default function App() {
   const [language, setLanguage] = useState<'en' | 'ar'>('en');
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+  const [calendlyModalOpen, setCalendlyModalOpen] = useState(false);
   const [activeProjectFilter, setActiveProjectFilter] = useState<'ai-voice' | 'enterprise' | 'automation'>('ai-voice');
 
   const t = content[language];
@@ -529,28 +530,8 @@ export default function App() {
   };
 
   const openCalendlyModal = () => {
-    setIsCalendlyOpen(true);
+    setCalendlyModalOpen(true);
   };
-
-  const closeCalendlyModal = () => {
-    setIsCalendlyOpen(false);
-  };
-
-  useEffect(() => {
-    if (!isCalendlyOpen) return;
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeCalendlyModal();
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isCalendlyOpen]);
 
   const filteredProjects = projects.filter(p => p.category === activeProjectFilter);
 
@@ -564,33 +545,32 @@ export default function App() {
         }`}
         role="banner"
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between max-w-screen-xl">
+        <div className="container mx-auto px-4 h-full flex items-center justify-between">
           <Button
             onClick={openCalendlyModal}
-            className="bg-[#D4AF37] hover:bg-[#C8A951] text-[#0A0A0A] font-semibold rounded-lg px-4 sm:px-6 shadow-lg shadow-[#D4AF37]/20 min-h-[44px] text-sm sm:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E0E]"
+            className="bg-[#D4AF37] hover:bg-[#C8A951] text-[#0A0A0A] font-semibold rounded-lg px-6 shadow-lg shadow-[#D4AF37]/20"
             aria-label={t.contact.bookMeeting}
           >
             <Calendar className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">{t.contact.bookMeeting}</span>
-            <span className="sm:hidden">{language === 'en' ? 'Book' : 'حجز'}</span>
+            {t.contact.bookMeeting}
           </Button>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6" role="navigation" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center gap-6" role="navigation" aria-label="Main navigation">
             <button
               onClick={() => scrollToSection('projects')}
-              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium min-h-[44px] px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E0E] rounded"
+              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium"
             >
               {t.nav.projects}
             </button>
             <button
               onClick={() => scrollToSection('skills')}
-              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium min-h-[44px] px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E0E] rounded"
+              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium"
             >
               {t.nav.skills}
             </button>
             <button
               onClick={() => scrollToSection('about')}
-              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium min-h-[44px] px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E0E] rounded"
+              className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors font-medium"
             >
               {t.nav.about}
             </button>
@@ -667,19 +647,19 @@ export default function App() {
       </header>
 
       <main role="main">
-        <section id="vanta-bg" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative" aria-labelledby="hero-title">
-          <div className="container mx-auto max-w-screen-xl relative z-10">
+        <section id="vanta-bg" className="pt-32 pb-20 px-4 relative" aria-labelledby="hero-title">
+          <div className="container mx-auto max-w-5xl relative z-10">
             <AnimatedSection>
               <h1
                 id="hero-title"
-                className="text-[clamp(2rem,5vw,3.5rem)] sm:text-5xl md:text-7xl font-bold text-[#F5F5F5] mb-4 text-center"
+                className="text-5xl md:text-7xl font-bold text-[#F5F5F5] mb-4 text-center"
               >
                 {t.hero.title}
               </h1>
-              <p className="text-[clamp(1.125rem,2.5vw,1.5rem)] sm:text-xl md:text-2xl text-[#D4AF37] mb-3 text-center font-semibold">
+              <p className="text-xl md:text-2xl text-[#D4AF37] mb-3 text-center font-semibold">
                 {t.hero.subtitle}
               </p>
-              <p className="text-[clamp(1rem,2vw,1.125rem)] sm:text-lg text-[#B6B6B6] mb-8 text-center max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg text-[#B6B6B6] mb-8 text-center max-w-3xl mx-auto leading-relaxed">
                 {t.hero.tagline}
               </p>
 
@@ -727,8 +707,8 @@ export default function App() {
           </div>
         </section>
 
-        <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0E0E0E]/50" aria-labelledby="projects-title">
-          <div className="container mx-auto max-w-screen-xl">
+        <section id="projects" className="py-20 px-4 bg-[#0E0E0E]/50" aria-labelledby="projects-title">
+          <div className="container mx-auto max-w-6xl">
             <AnimatedSection>
               <h2 id="projects-title" className="text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-4 text-center">
                 {t.projects.title}
@@ -759,7 +739,7 @@ export default function App() {
                 </TabsList>
 
                 <TabsContent value={activeProjectFilter} className="mt-8">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid md:grid-cols-2 gap-6">
                     {filteredProjects.map((project, idx) => (
                       <motion.div
                         key={project.id}
@@ -817,14 +797,14 @@ export default function App() {
           </div>
         </section>
 
-        <section id="skills" className="py-20 px-4 sm:px-6 lg:px-8" aria-labelledby="skills-title">
-          <div className="container mx-auto max-w-screen-xl">
+        <section id="skills" className="py-20 px-4" aria-labelledby="skills-title">
+          <div className="container mx-auto max-w-5xl">
             <AnimatedSection>
               <h2 id="skills-title" className="text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-12 text-center">
                 {t.skills.title}
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <Card className="bg-[#111111] border-[#D4AF37]/20">
                   <CardHeader>
                     <CardTitle className="text-[#F5F5F5] flex items-center gap-2">
@@ -901,8 +881,8 @@ export default function App() {
           </div>
         </section>
 
-        <section id="about" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#0E0E0E]/50" aria-labelledby="about-title">
-          <div className="container mx-auto max-w-screen-xl">
+        <section id="about" className="py-20 px-4 bg-[#0E0E0E]/50" aria-labelledby="about-title">
+          <div className="container mx-auto max-w-4xl">
             <AnimatedSection>
               <h2 id="about-title" className="text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-8 text-center">
                 {t.about.title}
@@ -924,8 +904,8 @@ export default function App() {
           </div>
         </section>
 
-        <section className="py-20 px-4 sm:px-6 lg:px-8" aria-labelledby="contact-title">
-          <div className="container mx-auto max-w-screen-xl text-center">
+        <section className="py-20 px-4" aria-labelledby="contact-title">
+          <div className="container mx-auto max-w-4xl text-center">
             <AnimatedSection>
               <h2 id="contact-title" className="text-4xl md:text-5xl font-bold text-[#F5F5F5] mb-6">
                 {t.contact.title}
@@ -969,8 +949,8 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="py-8 px-4 sm:px-6 lg:px-8 border-t border-[#D4AF37]/20" role="contentinfo">
-        <div className="container mx-auto max-w-screen-xl">
+      <footer className="py-8 px-4 border-t border-[#D4AF37]/20" role="contentinfo">
+        <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-[#B6B6B6] text-sm text-center md:text-left">
               {t.contact.footerText}
@@ -996,7 +976,7 @@ export default function App() {
       >
         <Button
           size="lg"
-          className="w-full bg-[#D4AF37] hover:bg-[#C8A951] text-[#0A0A0A] font-semibold shadow-2xl shadow-[#D4AF37]/30 min-h-[44px]"
+          className="w-full bg-[#D4AF37] hover:bg-[#C8A951] text-[#0A0A0A] font-semibold shadow-2xl shadow-[#D4AF37]/30"
           onClick={openCalendlyModal}
         >
           <Calendar className="w-5 h-5 mr-2" />
@@ -1005,52 +985,31 @@ export default function App() {
       </div>
 
       <div
-        className="hidden md:block fixed z-50 text-xs px-3 py-1.5 bg-[#111111] border border-[#D4AF37]/20 rounded-full text-[#B6B6B6] shadow-lg pointer-events-none"
+        className="hidden md:block fixed z-50 text-xs px-3 py-1.5 bg-[#111111] border border-[#D4AF37]/20 rounded-full text-[#B6B6B6] shadow-lg"
         style={{
           right: language === 'ar' ? 'auto' : '96px',
           left: language === 'ar' ? '96px' : 'auto',
           bottom: '24px',
         }}
-        aria-label="Chat widget label"
       >
         {t.chatLabel}
       </div>
 
-      {isCalendlyOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm transition-opacity duration-200"
-            onClick={closeCalendlyModal}
-            aria-hidden="true"
+      <Dialog open={calendlyModalOpen} onOpenChange={setCalendlyModalOpen}>
+        <DialogContent className="max-w-[720px] h-[560px] bg-[#111111] border-[#D4AF37]/20 p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-4 pb-2">
+            <DialogTitle className="text-[#F5F5F5]">{t.calendlyTitle}</DialogTitle>
+          </DialogHeader>
+          <iframe
+            src="https://calendly.com/abouella-dev/30min"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            className="rounded-b-lg"
+            title="Calendly scheduling"
           />
-          <div
-            className="fixed z-[71] sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-[90vw] sm:max-w-[720px] sm:h-[75vh] sm:max-h-[620px] w-full h-[85vh] bottom-0 sm:bottom-auto rounded-t-2xl sm:rounded-2xl border border-[#C8A951]/30 bg-[#0E0E0E] shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom duration-300 sm:animate-none"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="calendly-title"
-            style={{ top: 'auto' }}
-          >
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-[#C8A951]/20">
-              <h2 id="calendly-title" className="text-[#F5F5F5] text-lg sm:text-xl font-semibold">
-                {t.calendlyTitle}
-              </h2>
-              <button
-                onClick={closeCalendlyModal}
-                className="text-[#B6B6B6] hover:text-[#D4AF37] transition-colors p-2 rounded-lg hover:bg-[#D4AF37]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E0E0E]"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <iframe
-              src="https://calendly.com/abouella-dev/30min"
-              className="w-full flex-1 rounded-b-2xl"
-              frameBorder="0"
-              title="Calendly scheduling"
-            />
-          </div>
-        </>
-      )}
+        </DialogContent>
+      </Dialog>
 
       <div
         id="VG_OVERLAY_CONTAINER"
