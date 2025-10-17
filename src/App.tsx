@@ -1001,7 +1001,7 @@ export default function App() {
             <DialogTitle className="text-[#F5F5F5]">{t.calendlyTitle}</DialogTitle>
           </DialogHeader>
           <iframe
-            src="https://calendly.com/abouella-dev/30min?month=2025-10"
+            src="https://calendly.com/abouella-dev/30min"
             width="100%"
             height="100%"
             frameBorder="0"
